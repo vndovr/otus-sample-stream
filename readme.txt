@@ -13,7 +13,7 @@ helm install my-email -f otus-sample-email.yaml ./otus-sample-email
 helm install my-ing1 -f otus-sample-ing.yaml ./otus-sample-ing1
 helm install my-ing2 -f otus-sample-ing.yaml ./otus-sample-ing2
 
-newman run Otus-8.postman_collection.json -e Otus6.postman_environment.json --delay-request 100
+newman run Otus-8.postman_collection.json -e Otus8.postman_environment.json --delay-request 100
 
 helm uninstall my-ing1
 helm uninstall my-ing2
