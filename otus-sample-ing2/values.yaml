@@ -1,0 +1,28 @@
+# Default values for otus-sample-ing.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ingress:
+  annotations:
+
+  host: arch.homework
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

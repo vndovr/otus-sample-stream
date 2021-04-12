@@ -1,0 +1,39 @@
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "otus-sample-ing1.fullname" . }}
+  labels:
+    {{- include "otus-sample-ing1.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /profiles/self
+            backend:
+              serviceName: my-profile-otus-sample-profile
+              servicePort: 8000
+          - path: /notifications
+            backend:
+              serviceName: my-email-otus-sample-email
+              servicePort: 8000
+          - path: /accounts
+            backend:
+              serviceName: my-account-otus-sample-account
+              servicePort: 8000
+          - path: /orders
+            backend:
+              serviceName: my-order-otus-sample-order
+              servicePort: 8000
+          - path: /events
+            backend:
+              serviceName: my-event-otus-sample-event
+              servicePort: 8000

@@ -1,0 +1,30 @@
+# Default values for otus-sample-ing.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/auth-url: http://my-auth-otus-sample-auth.default.svc.cluster.local:8000/auth
+    nginx.ingress.kubernetes.io/auth-response-headers: X-User,X-Roles
+
+  host: arch.homework
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

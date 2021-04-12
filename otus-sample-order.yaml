@@ -1,0 +1,7 @@
+os:
+  kafka:
+    url: my-kf-kafka:9092
+  db:
+    url: "jdbc:postgresql://my-pg-db-postgresql:5432/db6"
+    username: postgres
+    password: test

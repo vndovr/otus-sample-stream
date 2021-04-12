@@ -1,0 +1,1180 @@
+{
+	"info": {
+		"_postman_id": "bb7f51c0-0cc3-454a-afb6-7b83a5c856aa",
+		"name": "Otus-6",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register e-shop user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Registering e-shop user...\");\r",
+							"var jsonData = JSON.parse(pm.request.body.raw);\r",
+							"postman.setEnvironmentVariable(\"login1\", jsonData.login);\r",
+							"postman.setEnvironmentVariable(\"password1\", jsonData.password);\r",
+							"console.log(\"User name: \", jsonData.login);\r",
+							"console.log(\"User pass: \", jsonData.password);\r",
+							"\r",
+							"pm.expect(201).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{$randomUserName}}\",\r\n  \"password\": \"{{$randomPassword}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/auth/register",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login of e-shop user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Logging in e-shop user: \", postman.getEnvironmentVariable(\"login1\"));\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"token1\", jsonData.token);\r",
+							"console.log(\"Got session: \", jsonData.token);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login1}}\",\r\n  \"password\": \"{{password1}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/auth/login",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create an order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Creation of new order via event submission\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"orderId\", jsonData.id);\r",
+							"\r",
+							"console.log(\"New order create with id: \", jsonData.id);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add first item to the order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Adding first item to the order\");\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}/1/2?xReqId=71042fa1-664e-4568-9d60-fc9a85db844c",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}",
+						"1",
+						"2"
+					],
+					"query": [
+						{
+							"key": "xReqId",
+							"value": "71042fa1-664e-4568-9d60-fc9a85db844c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add first item to the order second time",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Adding first item to the order second time\");\r",
+							"\r",
+							"pm.expect(409).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}/1/2?xReqId=71042fa1-664e-4568-9d60-fc9a85db844c",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}",
+						"1",
+						"2"
+					],
+					"query": [
+						{
+							"key": "xReqId",
+							"value": "71042fa1-664e-4568-9d60-fc9a85db844c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add second item to the order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Adding second item to the order\");\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}/3/2?xReqId=fe631d16-f878-481e-a593-2754a631471a",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}",
+						"3",
+						"2"
+					],
+					"query": [
+						{
+							"key": "xReqId",
+							"value": "fe631d16-f878-481e-a593-2754a631471a"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check the validity of the order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load the full information from the created order: \", postman.getEnvironmentVariable(\"orderId\"));\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"console.log(\"Items in the order: \", jsonData.items.length);\r",
+							"\r",
+							"console.log(\"Check that first item is in order\");\r",
+							"pm.expect(\"1\").to.eql(jsonData.items[0].itemId);\r",
+							"console.log(\"Check that second item is in order\");\r",
+							"pm.expect(\"3\").to.eql(jsonData.items[1].itemId);\r",
+							"\r",
+							"pm.expect(2).to.eql(jsonData.items.length);\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove second item from the order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Adding first item to the order\");\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}/3/-2?xReqId=9b69a5bb-63b2-4698-98c0-a5e45e34489a",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}",
+						"3",
+						"-2"
+					],
+					"query": [
+						{
+							"key": "xReqId",
+							"value": "9b69a5bb-63b2-4698-98c0-a5e45e34489a"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check that item was removed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load the full information from the created order: \", postman.getEnvironmentVariable(\"orderId\"));\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"console.log(\"Items in the order: \", jsonData.items.length);\r",
+							"\r",
+							"pm.expect(1).to.eql(jsonData.items.length);\r",
+							"\r",
+							"console.log(\"Check that first item is in order\");\r",
+							"pm.expect(\"1\").to.eql(jsonData.items[0].itemId);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel the order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Cancel the order: \", postman.getEnvironmentVariable(\"orderId\"));\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check that item was removed (by state)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load the full information from the created order: \", postman.getEnvironmentVariable(\"orderId\"));\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"console.log(\"Validate the status for the order: \", jsonData.state);\r",
+							"\r",
+							"pm.expect(\"CANCELED\").to.eql(jsonData.state);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a second order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Creation of new order via event submission\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"orderId\", jsonData.id);\r",
+							"\r",
+							"console.log(\"New order create with id: \", jsonData.id);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add first item to the second order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Adding first item to the order\");\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}/1/5?xReqId=d6354e35-20d6-48ae-82a9-5853f20752c2",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}",
+						"1",
+						"5"
+					],
+					"query": [
+						{
+							"key": "xReqId",
+							"value": "d6354e35-20d6-48ae-82a9-5853f20752c2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add second item to the second order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Adding second item to the order\");\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}/2/4?xReqId=432a5b6c-b263-4cd7-b8f2-5bf8457f4556",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}",
+						"2",
+						"4"
+					],
+					"query": [
+						{
+							"key": "xReqId",
+							"value": "432a5b6c-b263-4cd7-b8f2-5bf8457f4556"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send second order for billing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Send order for billing: \", postman.getEnvironmentVariable(\"orderId\"));\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"console.log(\"New order create with id: \", jsonData.id);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"Deliver as soon as possible\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a third order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Creation of new order via event submission\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"orderId\", jsonData.id);\r",
+							"\r",
+							"console.log(\"New order create with id: \", jsonData.id);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add an item to the third order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Adding first item to the order\");\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/events/orders/{{orderId}}/5/1?xReqId=8207caac-9bc5-4e54-b607-c19e6982552e",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"events",
+						"orders",
+						"{{orderId}}",
+						"5",
+						"1"
+					],
+					"query": [
+						{
+							"key": "xReqId",
+							"value": "8207caac-9bc5-4e54-b607-c19e6982552e"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all orders for user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load orders for current user\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout for e-shop user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Logout for user: \", postman.getEnvironmentVariable(\"login1\"));\r",
+							"\r",
+							"pm.expect(204).to.eql(pm.response.code);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "session={{token1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"{{token1}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/auth/logout",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login for e-shop admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Logging in admin user\");\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"token2\", jsonData.token);\r",
+							"console.log(\"Got session: \", jsonData.token);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"admin\",\r\n  \"password\": \"admin123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/auth/login",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all orders for admin order by STATE asc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load orders for admin order by STATE\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"console.log(\"Check that order of data is valid\");\r",
+							"pm.expect(\"CANCELED\").to.eql(jsonData[0].state);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders?sort=+state",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "+state"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all orders for admin order by STATE dsc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load orders for admin order by STATE\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"console.log(\"Check that order of data is valid\");\r",
+							"pm.expect(\"READY\").to.eql(jsonData[0].state);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders?sort=-state",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "-state"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all orders for admin order by TS asc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load orders for admin order by STATE\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"console.log(\"Check that order of data is valid\");\r",
+							"pm.expect(\"CANCELED\").to.eql(jsonData[0].state);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders?sort=+creationDate",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "+creationDate"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all orders for admin order by TS dsc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load orders for admin order by STATE\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"console.log(\"Check that order of data is valid\");\r",
+							"pm.expect(\"NEW\").to.eql(jsonData[0].state);\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders?sort=-creationDate",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "-creationDate"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all orders for admin filter by state READY",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Load orders for admin order by STATE\");\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"console.log(\"Check that returned order is in READY state\");\r",
+							"pm.expect(\"READY\").to.eql(jsonData[0].state);\r",
+							"\r",
+							"\r",
+							"pm.expect(200).to.eql(pm.response.code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "session={{token2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{baseUrl}}/orders?state=READY",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "READY"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
